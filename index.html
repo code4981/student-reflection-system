@@ -298,8 +298,8 @@
         <!-- 10. 개인별 조회와 반별 전체 조회 위치 변경 및 4번 요구사항 반영(삭제 페이지 제거) -->
         <div class="tab-nav">
             <button class="tab-btn active" onclick="switchTab('ref-tab-grant', this)">성찰 부여</button>
-            <button class="tab-btn" onclick="switchTab('ref-tab-record', this)">개인별 성찰 조회</button>
             <button class="tab-btn" onclick="switchTab('ref-tab-class-record', this)">🏫 반별 전체 조회</button>
+            <button class="tab-btn" onclick="switchTab('ref-tab-record', this)">개인별 성찰 조회</button>
             <button class="tab-btn" onclick="switchTab('ref-tab-monday', this)">월요일 성찰활동 대상</button>
         </div>
 
@@ -317,7 +317,7 @@
                         </div>
                     </div>
                     <div class="inline-group form-group">
-                        <div><label>날짜 (한국시간 기준)</label><input type="date" id="ref-date" readonly style="background:#F1F5F9;"></div>
+                        <div><label>날짜</label><input type="date" id="ref-date" readonly style="background:#F1F5F9;"></div>
                         <div>
                             <label>교시</label>
                             <select id="ref-period">
@@ -383,7 +383,7 @@
         <div id="ref-tab-monday" class="tab-content" style="display:none;">
             <div class="card">
                 <h3>월요일 성찰활동 대상자</h3>
-                <p style="font-size: 13px; color: #64748B; margin: 8px 0 15px;">누적 성찰이 3개 이상인 학생 명단입니다. (금요일 18시 이후 칭찬카드 차감 불가 적용)</p>
+                <p style="font-size: 13px; color: #64748B; margin: 8px 0 15px;">누적 성찰이 3개 이상인 학생 명단입니다. (금요일 이후 칭찬카드 사용 불가)</p>
                 <table class="list-table">
                     <thead><tr><th>학생</th><th>현재 성찰 수</th><th>성찰활동 처리</th></tr></thead>
                     <tbody id="monday-target-list"></tbody>
@@ -418,7 +418,7 @@
                             <div class="student-name-display" id="praise-student-name"></div>
                         </div>
                     </div>
-                    <div class="form-group"><label>날짜 (한국시간 기준)</label><input type="date" id="praise-date" readonly style="background:#F1F5F9;"></div>
+                    <div class="form-group"><label>날짜</label><input type="date" id="praise-date" readonly style="background:#F1F5F9;"></div>
                     <div class="form-group">
                         <label>칭찬 사유</label>
                         <select id="praise-reason-select" onchange="toggleCustomReason('praise')">
@@ -717,7 +717,7 @@
         return koreaTime.toISOString().substring(0, 10);
     }
 
-    function isFridayAfter18() {
+    function isFridayAfter22() {
         const now = new Date();
         const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
         const koreaTime = new Date(utc + (9 * 60 * 60 * 1000));
@@ -752,7 +752,7 @@
 
         const name = getStudentName(grade, classNum, num);
         if (name) {
-            display.innerText = `👤 ${name}`;
+            display.innerText = `👤 ${name} 학생`;
             display.style.color = "var(--primary)";
         } else {
             display.innerText = `❓ (등록되지 않은 학생)`;
@@ -920,7 +920,7 @@
 
         const studentName = getStudentName(grade, classNum, num) || `${num}번`;
 
-        if(!confirm(`(${studentName})에게 성찰을 부여하시겠습니까?`)) {
+        if(!confirm(`${studentName} 학생에게 성찰을 부여하시겠습니까?`)) {
             return;
         }
 
@@ -963,7 +963,7 @@
 
         const studentName = getStudentName(grade, classNum, num) || `${num}번`;
 
-        if(!confirm(`(${studentName})에게 칭찬 카드를 부여하시겠습니까?`)) {
+        if(!confirm(`${studentName} 학생에게 칭찬 카드를 부여하시겠습니까?`)) {
             return;
         }
 
@@ -1101,7 +1101,7 @@
 
     // 선생님 재량 성찰 삭제 공통 집행 함수
     function directDeleteReflection(refId, fromView) {
-        if(!confirm('해당 성찰 항목을 선생님 재량으로 삭제하시겠습니까?')) return;
+        if(!confirm('해당 성찰을 선생님 재량으로 삭제하시겠습니까? (칭찬카드 사용은 칭찬카드 페이지를 이용해주세요.)')) return;
         const db = getDb();
         const item = db.reflections.find(r => r.id == refId);
         
@@ -1111,7 +1111,7 @@
 
             if (window.saveReflectionToCloud) window.saveReflectionToCloud(item);
 
-            alert('선생님 재량으로 해당 성찰 항목을 삭제하였습니다.');
+            alert('선생님 재량으로 해당 성찰을 삭제하였습니다.');
             if(fromView === 'class') {
                 searchClassReflections();
             } else if(fromView === 'single') {
