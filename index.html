@@ -1145,7 +1145,7 @@
             return;
         }
 
-        const isBlockedTime = isFridayAfter18();
+        const isBlockedTime = isFridayAfter22();
         const isTargetStudent = activeReflections.length >= 3;
 
         let html = `<p style="margin-bottom:10px;">${studentName ? `<strong>${studentName} 학생</strong> | ` : ''}보유 칭찬카드: <strong>${activePraises.length}개</strong> | 현재 성찰: <strong>${activeReflections.length}개</strong></p>`;
